@@ -1,0 +1,66 @@
+#created by me- Rohit
+from django.http import HttpResponse
+from django.shortcuts import render
+
+def index(request):
+    
+    return render(request,'index.html')
+def analyze(request):
+    #get the text
+    djtext = (request.POST.get('text', 'default'))
+
+    #check checkbox values
+    removepunc= request.POST.get('removepunc', 'off')
+    capitalize= request.POST.get('capitalize', 'off')
+    RemoveExtraSpace = request.POST.get('RemoveExtraSpace', 'off')
+    analyzed = ''
+    punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+    
+    if removepunc == 'on':
+        
+        for ele in djtext:  
+            if ele not in punctuations:  
+                analyzed = analyzed + ele
+        
+        params = {'purpose' : 'remove punctuations', 'analyzed_text':analyzed}
+        djtext = analyzed
+        # return render(request, 'analyze.html', params)
+    
+    if capitalize == 'on':
+        analyzed= djtext.upper()
+        params = {'purpose' : 'Capitalize all', 'analyzed_text':analyzed}
+        # return render(request, 'analyze.html', params)
+        djtext= analyzed
+
+    if RemoveExtraSpace == 'on':
+        for index, char in enumerate(djtext):
+            if not (djtext[index]== " " and djtext[index + 1] == " "):
+                analyzed = analyzed+char
+        params = {'purpose' : 'Remove extra space', 'analyzed_text':analyzed}
+    
+    if(removepunc!="on" and RemoveExtraSpace!="on" and capitalize!="on"):
+        return HttpResponse("turn on analyzer")
+    
+    return render(request, 'analyze.html', params)
+        # djtext=analyzed
+
+        # else:
+    #     return HttpResponse("Turn on analyzer")
+
+# def removepunc(request):
+#     djtext = (request.GET.get('text', 'default'))
+#     print(djtext)
+#     return HttpResponse('''removepunc''')
+    
+
+# def capfirst(request):
+#     return HttpResponse(''' capfirst ''')
+
+# def newlineremove(request):
+#     return HttpResponse(''' newlineremove ''')
+
+# def spaceremove(request):
+#     return HttpResponse('''spaceremove''')
+
+# def charcount(request):
+#     return HttpResponse(''' charcount ''')
